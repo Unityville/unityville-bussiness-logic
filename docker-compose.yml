@@ -1,8 +1,39 @@
 version: '3.9'
 
 services:
+  core_app:
+    build:
+      context: .
+      dockerfile: Dockerfile-bl
+    depends_on:
+      db_backend:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    networks:
+      - backend_auth_network
+      - backend_db_network
+
+  auth_app:
+    build:
+      context: ../auth/
+      dockerfile: Dockerfile-auth
+    depends_on:
+      db_auth:
+        condition: service_healthy
+    ports:
+      - '8090:8090'
+    networks:
+      - backend_auth_network
+      - auth_db_network
+
   db_backend:
     image: mysql:8.0.33
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
     volumes:
       - db_backend:/var/lib/mysql
@@ -11,13 +42,16 @@ services:
       - MYSQL_DATABASE=unityville
       - MYSQL_ROOT_USER=root
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    ports:
-      - '3306:3306'
-    depends_on:
-      - db_auth
+    networks:
+      backend_db_network:
 
   db_auth:
     image: mysql:8.0.33
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     restart: always
     volumes:
       - db_auth:/var/lib/mysql
@@ -26,9 +60,14 @@ services:
       - MYSQL_DATABASE=auth
       - MYSQL_ROOT_USER=root
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
-    ports:
-      - '3307:3306'
+    networks:
+      auth_db_network:
 
 volumes:
   db_backend:
   db_auth:
+
+networks:
+  backend_auth_network:
+  backend_db_network:
+  auth_db_network:
