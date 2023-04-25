@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  db_backend:
+    image: mysql:8.0.33
+    restart: always
+    volumes:
+      - db_backend:/var/lib/mysql
+    user: root
+    environment:
+      - MYSQL_DATABASE=unityville
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - '3306:3306'
+    depends_on:
+      - db_auth
+
+  db_auth:
+    image: mysql:8.0.33
+    restart: always
+    volumes:
+      - db_auth:/var/lib/mysql
+    user: root
+    environment:
+      - MYSQL_DATABASE=auth
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - '3307:3306'
+
+volumes:
+  db_backend:
+  db_auth:
