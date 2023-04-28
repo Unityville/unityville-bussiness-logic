@@ -43,7 +43,23 @@ services:
       - MYSQL_ROOT_USER=root
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
     networks:
-      backend_db_network:
+      - backend_db_network
+      - workbench_network
+
+  workbench:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - '8081:80'
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      db_backend:
+        condition: service_healthy
+      db_auth:
+        condition: service_healthy
+    networks:
+      - workbench_network
 
   db_auth:
     image: mysql:8.0.33
@@ -62,6 +78,7 @@ services:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
     networks:
       auth_db_network:
+      workbench_network:
 
 volumes:
   db_backend:
@@ -71,3 +88,4 @@ networks:
   backend_auth_network:
   backend_db_network:
   auth_db_network:
+  workbench_network:
