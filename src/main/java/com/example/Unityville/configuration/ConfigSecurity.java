@@ -18,7 +18,6 @@ public class ConfigSecurity {
                 r -> r.jwt().jwkSetUri(key)
         );
         httpSecurity.csrf().disable().authorizeHttpRequests()
-//                .requestMatchers("/users/**").hasRole("user")
                 .anyRequest().authenticated();
         return httpSecurity.build();
     }

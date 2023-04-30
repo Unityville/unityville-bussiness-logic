@@ -1,6 +1,5 @@
 package com.example.Unityville.services;
 
-import com.example.Unityville.entities.Like;
 import com.example.Unityville.entities.Post;
 import com.example.Unityville.exceptions.AlreadyInsertException;
 import com.example.Unityville.exceptions.NullArgumentsException;
@@ -9,9 +8,9 @@ import com.example.Unityville.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -57,10 +56,7 @@ public class PostService {
 
     public PostLikesDTO getLikesFromPost(Long id) {
         var post = postRepository.getReferenceById(id);
-        List<String> names = new ArrayList<>();
-        for (Like like : post.getLikes()) {
-            names.add(like.getUser().getUsername());
-        }
+        List<String> names = post.getLikes().stream().map(like -> like.getUser().getUsername()).collect(Collectors.toList());
 
         return PostLikesDTO.builder()
                 .id(post.getId())

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +24,7 @@ public class CommunityOfPracticeService {
     }
 
     public List<Post> getPostsPinnedFromCop(Long id) {
-        List<Post> posts = new LinkedList<>();
         CommunityOfPractice cop = communityOfPracticeRepository.getReferenceById(id);
-        for (Post post : cop.getPosts()) {
-            if (post.isPinned()){
-                posts.add(post);
-            }
-        }
-        return posts;
+        return cop.getPosts().stream().filter(Post::isPinned).collect(Collectors.toCollection(LinkedList::new));
     }
 }

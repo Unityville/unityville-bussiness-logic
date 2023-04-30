@@ -42,10 +42,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User getReferenceById(Long id) {
-        return userRepository.getReferenceById(id);
-    }
-
     public User patchUserWithFollowedCOP(Long userId, Long copId) {
         var user = userRepository.getReferenceById(userId);
         var cop = communityOfPracticeRepository.getReferenceById(copId);
@@ -103,9 +99,7 @@ public class UserService {
     public User findUserById(Long id) {
         Optional<User> u = userRepository.findById(id);
 
-        if (u.isEmpty()) {
-            throw new NotFoundException("Id not available in the database!");
-        }
+        if (u.isEmpty()) throw new NotFoundException("Id not available in the database!");
 
         return u.get();
     }

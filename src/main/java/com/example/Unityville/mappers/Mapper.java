@@ -28,7 +28,6 @@ public class Mapper {
     public UserLikedPostsDTO convertToUserLikedDTO(User user){
         return modelMapper.map(user, UserLikedPostsDTO.class);
     }
-
     public CommunityOfPracticeDTO convertToDTO(CommunityOfPractice communityOfPractice){
         return modelMapper.map(communityOfPractice, CommunityOfPracticeDTO.class);
     }

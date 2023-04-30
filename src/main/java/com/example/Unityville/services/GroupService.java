@@ -25,7 +25,7 @@ public class GroupService {
     }
 
     public Group getReferenceById(Long id) {
-        return this.groupRepository.getReferenceById(id);
+        return groupRepository.getReferenceById(id);
     }
 
     public Group addCOP(Long id, CommunityOfPracticeAddOrRemoveDTO copDTO) {
