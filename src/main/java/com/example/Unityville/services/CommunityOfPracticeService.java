@@ -2,7 +2,6 @@ package com.example.Unityville.services;
 
 import com.example.Unityville.entities.CommunityOfPractice;
 import com.example.Unityville.entities.Post;
-import com.example.Unityville.repositories.CommunityOfPracticeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +11,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommunityOfPracticeService {
-    private final CommunityOfPracticeRepository communityOfPracticeRepository;
-
+    private final IOCallerService ioCallerService;
     public CommunityOfPractice save(CommunityOfPractice cop) {
-        return communityOfPracticeRepository.save(cop);
+        return ioCallerService.saveCOP(cop);
     }
 
     public List<CommunityOfPractice> findAll() {

@@ -35,6 +35,8 @@ services:
       timeout: 5s
       retries: 5
     restart: always
+    ports:
+      - '3306:3306'
     volumes:
       - db_backend:/var/lib/mysql
     user: root
@@ -72,6 +74,8 @@ services:
     volumes:
       - db_auth:/var/lib/mysql
     user: root
+    ports:
+      - '3307:3306'
     environment:
       - MYSQL_DATABASE=auth
       - MYSQL_ROOT_USER=root
