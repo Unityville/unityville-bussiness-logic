@@ -1,7 +1,9 @@
 package com.example.Unityville.controller;
 
+import com.example.Unityville.entities.Comment;
 import com.example.Unityville.entities.User;
 import com.example.Unityville.mappers.Mapper;
+import com.example.Unityville.models.CommentDTO;
 import com.example.Unityville.models.user.UserDTO;
 import com.example.Unityville.models.user.UserLikedPostsDTO;
 import com.example.Unityville.services.UserService;
@@ -52,14 +54,32 @@ public class UserController {
         return ResponseEntity.ok(mapper.convertToDTO(userService.patchUserWithUnfollowedCOP(userId, copID)));
     }
 
-    @PatchMapping("/{userId}/like/{postId}")
+    @PatchMapping("/{userId}/posts/like/postId}")
     public ResponseEntity<UserLikedPostsDTO> likePost(@PathVariable Long userId, @PathVariable Long postId) {
         return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithLikedPost(userId, postId)));
     }
 
-    @PatchMapping("/{userId}/dislike/{postId}")
+    @PatchMapping("/{userId}/posts/dislike/{postId}")
     public ResponseEntity<UserLikedPostsDTO> dislikePost(@PathVariable Long userId, @PathVariable Long postId) {
         return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithDislikedPost(userId, postId)));
     }
+    @PatchMapping("/{userId}/comments/like/{commentId}")
+    public ResponseEntity<UserLikedPostsDTO> likeComments(@PathVariable Long userId, @PathVariable Long commentId) {
+        return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithLikedComment(userId, commentId)));
+    }
 
+    @PatchMapping("/{userId}/comments/dislike/{commentId}")
+    public ResponseEntity<UserLikedPostsDTO> dislikeComment(@PathVariable Long userId, @PathVariable Long commentId) {
+        return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithDislikedComment(userId, commentId)));
+    }
+
+    @PatchMapping("/{userId}/comments/{commentId}")
+    public ResponseEntity<UserLikedPostsDTO> editComment(@PathVariable Long userId, @PathVariable Long commentId,
+                                                         @RequestBody CommentDTO newComment) {
+        Comment commentEntity = Comment.builder()
+                .content(newComment.getContent())
+                .build();
+
+        return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.editComment(userId, commentId, commentEntity)));
+    }
 }

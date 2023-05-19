@@ -1,5 +1,6 @@
 package com.example.Unityville.services;
 
+import com.example.Unityville.entities.Comment;
 import com.example.Unityville.entities.Like;
 import com.example.Unityville.entities.Post;
 import com.example.Unityville.entities.User;
@@ -23,6 +24,7 @@ public class UserService {
     private final CommunityOfPracticeRepository communityOfPracticeRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -86,6 +88,25 @@ public class UserService {
         return userRepository.getReferenceById(userId);
     }
 
+    public User patchUserWithLikedComment(Long userId, Long commentId) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Comment> comment = commentRepository.findById(commentId);
+
+        if (user.isEmpty() || comment.isEmpty()) {
+            throw new NotFoundException("Id not available in the database!");
+        }
+
+        Like like = Like.builder()
+                .user(user.get())
+                .comment(comment.get())
+                .timestamp(Timestamp.from(Instant.now()))
+                .build();
+
+        likeRepository.save(like);
+
+        return userRepository.getReferenceById(userId);
+    }
+
     @Transactional
     public User patchUserWithDislikedPost(Long userId, Long postId) {
         Optional<User> user = userRepository.findById(userId);
@@ -99,6 +120,19 @@ public class UserService {
 
         return userRepository.getReferenceById(userId);
     }
+    @Transactional
+    public User patchUserWithDislikedComment(Long userId, Long commentId) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Comment> comment = commentRepository.findById(commentId);
+
+        if (user.isEmpty() || comment.isEmpty()) {
+            throw new NotFoundException("Id not available in the database!");
+        }
+
+        likeRepository.deleteLikeByUserAndComment(user.get(), comment.get());
+
+        return userRepository.getReferenceById(userId);
+    }
 
     public User findUserById(Long id) {
         Optional<User> u = userRepository.findById(id);
@@ -108,5 +142,21 @@ public class UserService {
         }
 
         return u.get();
+    }
+
+    public User editComment(Long userId, Long commentId, Comment newComment) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Comment> comment = commentRepository.findById(commentId);
+
+        if (user.isEmpty() || comment.isEmpty()) {
+            throw new NotFoundException("Id not available in the database!");
+        }
+
+        comment.get().setContent(newComment.getContent());
+        comment.get().setCreateTimestamp(Timestamp.from(Instant.now()));
+
+        commentRepository.save(comment.get());
+
+        return userRepository.getReferenceById(userId);
     }
 }

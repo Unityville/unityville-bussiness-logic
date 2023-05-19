@@ -1,6 +1,7 @@
 package com.example.Unityville.mappers;
 
 import com.example.Unityville.entities.*;
+import com.example.Unityville.models.CommentDTO;
 import com.example.Unityville.models.like.LikeAllDTO;
 import com.example.Unityville.models.cop.CommunityOfPracticeDTO;
 import com.example.Unityville.models.GroupDTO;
@@ -41,7 +42,6 @@ public class Mapper {
     public Group convertToEntity(GroupDTO groupDTO) {
         return modelMapper.map(groupDTO, Group.class);
     }
-
     public LikeAllDTO convertToDTO(Like like) {
         return LikeAllDTO.builder()
                 .id(like.getId())
@@ -55,5 +55,8 @@ public class Mapper {
                         .createTimestamp(like.getPost().getCreateTimestamp())
                         .build())
                 .build();
+    }
+    public Comment convertToEntity(CommentDTO commentDTO){
+        return modelMapper.map(commentDTO, Comment.class);
     }
 }

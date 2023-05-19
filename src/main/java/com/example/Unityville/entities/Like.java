@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-
 @Builder
 @Data
 @AllArgsConstructor
@@ -19,4 +18,6 @@ public class Like {
     private Post post;
 
     private User user;
+
+    private Comment comment;
 }

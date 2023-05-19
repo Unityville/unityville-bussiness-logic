@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @Builder
 @Data
 @AllArgsConstructor
@@ -24,4 +23,6 @@ public class User {
     private List<Post> posts;
 
     private List<Like> likes;
+
+    private List<Comment> comments;
 }

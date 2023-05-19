@@ -21,7 +21,7 @@ public class CommunityOfPracticeController {
     private final CommunityOfPracticeService communityOfPracticeService;
     private final Mapper mapper;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<CommunityOfPracticeDTO>> getAllCOP() {
         return ResponseEntity.ok(communityOfPracticeService.findAll()
                 .stream()
@@ -29,7 +29,7 @@ public class CommunityOfPracticeController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<CommunityOfPracticeDTO> saveCOP(@RequestBody CommunityOfPracticeDTO communityOfPracticeDTO) {
         CommunityOfPractice cop = CommunityOfPractice.builder()
                 .name(communityOfPracticeDTO.getName())

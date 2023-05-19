@@ -1,9 +1,6 @@
 package com.example.Unityville.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -30,4 +27,6 @@ public class Post {
     private CommunityOfPractice communityOfPractice;
 
     private List<Like> likes;
+
+    private List<Comment> comments;
 }
