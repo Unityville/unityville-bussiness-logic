@@ -52,7 +52,7 @@ services:
       - db_backend:/var/lib/mysql
     user: root
     environment:
-      - MYSQL_DATABASE=unityville
+      - MYSQL_DATABASE=connectville-app
       - MYSQL_ROOT_USER=root
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
     networks:
