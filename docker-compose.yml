@@ -21,7 +21,7 @@ services:
       db_backend:
         condition: service_healthy
     ports:
-      - '8080:8080'
+      - '8070:8070'
     networks:
       - io_core
       - io_db_backend
@@ -46,7 +46,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: always
     ports:
       - '3306:3306'
     volumes:
@@ -62,7 +61,6 @@ services:
 
   workbench:
     image: phpmyadmin
-    restart: always
     ports:
       - '8081:80'
     environment:
@@ -83,7 +81,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    restart: always
     volumes:
       - db_auth:/var/lib/mysql
     user: root
