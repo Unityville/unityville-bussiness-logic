@@ -34,7 +34,6 @@ public class CommunityOfPracticeController {
         CommunityOfPractice cop = CommunityOfPractice.builder()
                 .name(communityOfPracticeDTO.getName())
                 .description(communityOfPracticeDTO.getDescription())
-                .group(mapper.convertToEntity(communityOfPracticeDTO.getGroup()))
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(mapper.convertToDTO(communityOfPracticeService.save(cop)));

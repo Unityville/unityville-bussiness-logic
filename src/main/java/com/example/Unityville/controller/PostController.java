@@ -22,7 +22,7 @@ public class PostController {
     private final PostService postService;
     private final Mapper mapper;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<PostDTO>> findAllPosts() {
         return ResponseEntity.ok(postService.findAll()
                 .stream()
@@ -30,7 +30,7 @@ public class PostController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<PostDTO> savePost(@RequestBody PostDTO postDTO) {
         Post post = Post.builder()
                 .title(postDTO.getTitle())
@@ -49,7 +49,7 @@ public class PostController {
         return ResponseEntity.ok(mapper.convertToDTO(postService.deletePost(id)));
     }
 
-    @PatchMapping("/{id}/edit")
+    @PutMapping("/{id}/edit")
     public ResponseEntity<PostDTO> editPost(@PathVariable Long id, @RequestBody PostEditDTO postEditDTO) {
         Post post = Post.builder()
                 .title(postEditDTO.getTitle())

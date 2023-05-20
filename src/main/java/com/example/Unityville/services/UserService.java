@@ -1,13 +1,9 @@
 package com.example.Unityville.services;
 
-import com.example.Unityville.entities.Comment;
-import com.example.Unityville.entities.Like;
-import com.example.Unityville.entities.Post;
-import com.example.Unityville.entities.User;
+import com.example.Unityville.entities.*;
 import com.example.Unityville.exceptions.AlreadyInsertException;
 import com.example.Unityville.exceptions.NotFoundException;
 import com.example.Unityville.exceptions.NullArgumentsException;
-import com.example.Unityville.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,23 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
-    private final CommunityOfPracticeRepository communityOfPracticeRepository;
-    private final PostRepository postRepository;
-    private final LikeRepository likeRepository;
-    private final CommentRepository commentRepository;
+    private final IOCallerService ioCallerService;
 
     public List<User> findAll() {
-        return userRepository.findAll();
+        return ioCallerService.findAllUsers();
     }
 
     public User save(User user) {
-        var u = userRepository.findUserByUsername(user.getUsername());
+        var u = ioCallerService.findUserByUsername(user.getUsername());
 
         if (user.getUsername() == null) {
             throw new NullArgumentsException("illegal args");
@@ -41,122 +32,105 @@ public class UserService {
             throw new AlreadyInsertException("too bad! it's already inserted");
         }
 
-        return userRepository.save(user);
-    }
-
-    public User getReferenceById(Long id) {
-        return userRepository.getReferenceById(id);
+        return ioCallerService.saveUser(user);
     }
 
     public User patchUserWithFollowedCOP(Long userId, Long copId) {
-        var user = userRepository.getReferenceById(userId);
-        var cop = communityOfPracticeRepository.getReferenceById(copId);
+        User user = ioCallerService.getUserReferenceById(userId);
+        CommunityOfPractice cop = ioCallerService.getCOPById(copId);
 
         if (!user.getCommunityOfPractices().contains(cop)) {
             user.getCommunityOfPractices().add(cop);
         }
 
-        return userRepository.save(user);
+        return ioCallerService.saveUser(user);
     }
 
     public User patchUserWithUnfollowedCOP(Long userId, Long copId) {
-        var user = userRepository.getReferenceById(userId);
-        var cop = communityOfPracticeRepository.getReferenceById(copId);
+        var user = ioCallerService.getUserReferenceById(userId);
+        var cop = ioCallerService.getCOPById(copId);
 
         user.getCommunityOfPractices().remove(cop);
         cop.getUsers().remove(user);
 
-        return userRepository.save(user);
+        return ioCallerService.saveUser(user);
     }
 
     public User patchUserWithLikedPost(Long userId, Long postId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Post> post = postRepository.findById(postId);
+        User user = ioCallerService.findUserById(userId);
+        Post post = ioCallerService.findPostById(postId);
 
-        if (user.isEmpty() || post.isEmpty()) {
+        if (user == null || post == null) {
             throw new NotFoundException("Id not available in the database!");
         }
 
         Like like = Like.builder()
-                .user(user.get())
-                .post(post.get())
+                .user(user)
+                .post(post)
                 .timestamp(Timestamp.from(Instant.now()))
                 .build();
 
-        likeRepository.save(like);
+        ioCallerService.saveLike(like);
 
-        return userRepository.getReferenceById(userId);
+        return ioCallerService.getUserReferenceById(userId);
     }
 
     public User patchUserWithLikedComment(Long userId, Long commentId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Comment> comment = commentRepository.findById(commentId);
+        User user = ioCallerService.findUserById(userId);
+        Comment comment = ioCallerService.findCommentById(commentId);
 
-        if (user.isEmpty() || comment.isEmpty()) {
+        if (user == null || comment == null) {
             throw new NotFoundException("Id not available in the database!");
         }
 
         Like like = Like.builder()
-                .user(user.get())
-                .comment(comment.get())
+                .user(user)
+                .comment(comment)
                 .timestamp(Timestamp.from(Instant.now()))
                 .build();
 
-        likeRepository.save(like);
+        ioCallerService.saveLike(like);
 
-        return userRepository.getReferenceById(userId);
+        return ioCallerService.getUserReferenceById(userId);
     }
 
     @Transactional
     public User patchUserWithDislikedPost(Long userId, Long postId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Post> post = postRepository.findById(postId);
+        ioCallerService.deleteLikeByUserAndPost(userId, postId);
 
-        if (user.isEmpty() || post.isEmpty()) {
-            throw new NotFoundException("Id not available in the database!");
-        }
-
-        likeRepository.deleteLikeByUserAndPost(user.get(), post.get());
-
-        return userRepository.getReferenceById(userId);
+        return ioCallerService.getUserReferenceById(userId);
     }
+
     @Transactional
     public User patchUserWithDislikedComment(Long userId, Long commentId) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Comment> comment = commentRepository.findById(commentId);
+        ioCallerService.deleteLikeByUserAndComment(userId, commentId);
 
-        if (user.isEmpty() || comment.isEmpty()) {
-            throw new NotFoundException("Id not available in the database!");
-        }
-
-        likeRepository.deleteLikeByUserAndComment(user.get(), comment.get());
-
-        return userRepository.getReferenceById(userId);
+        return ioCallerService.getUserReferenceById(userId);
     }
 
     public User findUserById(Long id) {
-        Optional<User> u = userRepository.findById(id);
+        User u = ioCallerService.findUserById(id);
 
-        if (u.isEmpty()) {
+        if (u == null) {
             throw new NotFoundException("Id not available in the database!");
         }
 
-        return u.get();
+        return u;
     }
 
     public User editComment(Long userId, Long commentId, Comment newComment) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Comment> comment = commentRepository.findById(commentId);
+        User user = ioCallerService.findUserById(userId);
+        Comment comment = ioCallerService.findCommentById(commentId);
 
-        if (user.isEmpty() || comment.isEmpty()) {
+        if (user == null || comment == null) {
             throw new NotFoundException("Id not available in the database!");
         }
 
-        comment.get().setContent(newComment.getContent());
-        comment.get().setCreateTimestamp(Timestamp.from(Instant.now()));
+        comment.setContent(newComment.getContent());
+        comment.setCreateTimestamp(Timestamp.from(Instant.now()));
 
-        commentRepository.save(comment.get());
+        ioCallerService.saveComment(comment);
 
-        return userRepository.getReferenceById(userId);
+        return ioCallerService.getUserReferenceById(userId);
     }
 }

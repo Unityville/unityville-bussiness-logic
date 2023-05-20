@@ -1,5 +1,6 @@
 package com.example.Unityville.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,4 +26,9 @@ public class User {
     private List<Like> likes;
 
     private List<Comment> comments;
+
+    @JsonCreator
+    public User(Long id) {
+        this.id = id;
+    }
 }

@@ -1,66 +1,61 @@
 package com.example.Unityville.services;
 
-import com.example.Unityville.entities.Like;
 import com.example.Unityville.entities.Post;
 import com.example.Unityville.exceptions.AlreadyInsertException;
 import com.example.Unityville.exceptions.NullArgumentsException;
 import com.example.Unityville.models.post.PostLikesDTO;
-import com.example.Unityville.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final PostRepository postRepository;
+    private final IOCallerService ioCallerService;
+
     public Post save(Post post) {
         if (post.getTitle() == null || post.getText() == null) {
             throw new NullArgumentsException("illegal args");
         }
 
-        Optional<Post> p = postRepository.findPostByTitle(post.getTitle());
+        Post p = ioCallerService.getPostByTitle(post.getTitle());
 
-        if (p.isEmpty()) {
+        if (p == null) {
             throw new AlreadyInsertException("too bad! it's already inserted");
         }
 
-        return postRepository.save(post);
+        return ioCallerService.savePost(post);
     }
 
     public Post deletePost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow();
+        Post post = ioCallerService.findPostById(id);
 
-        postRepository.deleteById(id);
+        ioCallerService.deletePostById(id);
 
         return post;
     }
 
     public Post editPost(Long id, Post postEdit) {
-        Post postFound = postRepository.findById(id).orElseThrow();
+        Post postFound = ioCallerService.findPostById(id);
         postFound.setImage(postEdit.getImage());
         postFound.setText(postEdit.getText());
         postFound.setTitle(postEdit.getTitle());
         postFound.setPinned(postEdit.isPinned());
 
-        postRepository.save(postFound);
+        ioCallerService.savePost(postFound);
         return postFound;
     }
 
     public List<Post> findAll() {
-        return postRepository.findAll();
+        return ioCallerService.findAllPosts();
     }
 
     public PostLikesDTO getLikesFromPost(Long id) {
-        var post = postRepository.getReferenceById(id);
-        List<String> names = new ArrayList<>();
-        for (Like like : post.getLikes()) {
-            names.add(like.getUser().getUsername());
-        }
+        var post = ioCallerService.getPostReferenceById(id);
+        List<String> names = post.getLikes().stream().map(like -> like.getUser().getUsername()).collect(Collectors.toList());
 
         return PostLikesDTO.builder()
                 .id(post.getId())

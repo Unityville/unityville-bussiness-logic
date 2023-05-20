@@ -1,6 +1,7 @@
 package com.example.Unityville.models;
 
 
+import com.example.Unityville.models.cop.CommunityOfPracticeDTO;
 import com.example.Unityville.models.user.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,4 +21,5 @@ public class GroupDTO {
     private String name;
     private String description;
     private List<UserDTO> users;
+    private List<CommunityOfPracticeDTO> communityOfPractices;
 }

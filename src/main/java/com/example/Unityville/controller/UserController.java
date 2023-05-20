@@ -22,7 +22,7 @@ public class UserController {
     private final UserService userService;
     private final Mapper mapper;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<UserDTO>> findAllUsers() {
         return ResponseEntity.ok(userService.findAll()
                 .stream()
@@ -31,11 +31,11 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long id){
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
         return ResponseEntity.ok(mapper.convertToDTO(userService.findUserById(id)));
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<UserDTO> saveUsers(@RequestBody UserDTO user) {
         User userEntity = User.builder()
                 .username(user.getUsername())
@@ -44,36 +44,37 @@ public class UserController {
                 .body(mapper.convertToDTO(userService.save(userEntity)));
     }
 
-    @PatchMapping("/{userId}/follow/{copID}")
+    @PutMapping("/{userId}/follow/{copID}")
     public ResponseEntity<UserDTO> followCOP(@PathVariable Long userId, @PathVariable Long copID) {
         return ResponseEntity.ok(mapper.convertToDTO(userService.patchUserWithFollowedCOP(userId, copID)));
     }
 
-    @PatchMapping("/{userId}/unfollow/{copID}")
+    @PutMapping("/{userId}/unfollow/{copID}")
     public ResponseEntity<UserDTO> unfollowCOP(@PathVariable Long userId, @PathVariable Long copID) {
         return ResponseEntity.ok(mapper.convertToDTO(userService.patchUserWithUnfollowedCOP(userId, copID)));
     }
 
-    @PatchMapping("/{userId}/posts/like/postId}")
+    @PutMapping("/{userId}/posts/like/{postId}")
     public ResponseEntity<UserLikedPostsDTO> likePost(@PathVariable Long userId, @PathVariable Long postId) {
         return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithLikedPost(userId, postId)));
     }
 
-    @PatchMapping("/{userId}/posts/dislike/{postId}")
+    @PutMapping("/{userId}/posts/dislike/{postId}")
     public ResponseEntity<UserLikedPostsDTO> dislikePost(@PathVariable Long userId, @PathVariable Long postId) {
         return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithDislikedPost(userId, postId)));
     }
-    @PatchMapping("/{userId}/comments/like/{commentId}")
+
+    @PutMapping("/{userId}/comments/like/{commentId}")
     public ResponseEntity<UserLikedPostsDTO> likeComments(@PathVariable Long userId, @PathVariable Long commentId) {
         return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithLikedComment(userId, commentId)));
     }
 
-    @PatchMapping("/{userId}/comments/dislike/{commentId}")
+    @PutMapping("/{userId}/comments/dislike/{commentId}")
     public ResponseEntity<UserLikedPostsDTO> dislikeComment(@PathVariable Long userId, @PathVariable Long commentId) {
         return ResponseEntity.ok(mapper.convertToUserLikedDTO(userService.patchUserWithDislikedComment(userId, commentId)));
     }
 
-    @PatchMapping("/{userId}/comments/{commentId}")
+    @PutMapping("/{userId}/comments/{commentId}")
     public ResponseEntity<UserLikedPostsDTO> editComment(@PathVariable Long userId, @PathVariable Long commentId,
                                                          @RequestBody CommentDTO newComment) {
         Comment commentEntity = Comment.builder()

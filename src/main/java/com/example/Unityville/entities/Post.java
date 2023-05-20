@@ -1,5 +1,7 @@
 package com.example.Unityville.entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -29,4 +31,9 @@ public class Post {
     private List<Like> likes;
 
     private List<Comment> comments;
+
+    @JsonCreator
+    public Post(Long id) {
+        this.id = id;
+    }
 }
