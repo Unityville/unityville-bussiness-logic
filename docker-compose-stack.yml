@@ -101,6 +101,7 @@ services:
     image: kong:latest
     volumes:
       - ./Kong:/usr/local/kong/declarative
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
     environment:
       KONG_DATABASE: 'off'
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml

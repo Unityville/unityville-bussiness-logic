@@ -8,12 +8,13 @@ services:
         paths:
           - /api/cop
 
-#  - name: db-adminer
-#    url: http://workbench:8081
-#    routes:
-#      - name: adminer-service
-#        paths:
-#          - /adminer
+  - name: workbench
+    url: http://workbench:80
+    routes:
+      - name: workbench-route
+        paths:
+          - /workbench
+        strip_path: true
 
 #consumers:
 #  - username: lab-student
