@@ -1,7 +1,7 @@
 package com.example.Unityville.models.post;
 
-import com.example.Unityville.models.user.UserDTO;
 import com.example.Unityville.models.cop.CommunityOfPracticeDTO;
+import com.example.Unityville.models.user.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

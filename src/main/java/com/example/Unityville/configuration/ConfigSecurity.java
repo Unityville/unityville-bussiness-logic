@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,7 +23,7 @@ public class ConfigSecurity {
     private String key;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new GrantedAuthoritiesExtractor());
 
@@ -32,7 +33,9 @@ public class ConfigSecurity {
                         .jwkSetUri(key)
         );
         httpSecurity.csrf().disable().authorizeHttpRequests()
-//                .requestMatchers("/users/**").hasAuthority("admin")
+                .requestMatchers(HttpMethod.POST, "/posts").hasAuthority("admin")
+                .requestMatchers(HttpMethod.DELETE, "/posts/*").hasAuthority("admin")
+                .requestMatchers(HttpMethod.PUT, "/posts/**").hasAuthority("admin")
                 .anyRequest().authenticated();
         return httpSecurity.build();
     }

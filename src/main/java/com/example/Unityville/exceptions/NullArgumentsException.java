@@ -1,6 +1,6 @@
 package com.example.Unityville.exceptions;
 
-public class NullArgumentsException extends RuntimeException{
+public class NullArgumentsException extends RuntimeException {
     public NullArgumentsException() {
     }
 

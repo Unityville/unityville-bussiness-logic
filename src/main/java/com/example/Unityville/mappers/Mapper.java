@@ -2,9 +2,9 @@ package com.example.Unityville.mappers;
 
 import com.example.Unityville.entities.*;
 import com.example.Unityville.models.CommentDTO;
-import com.example.Unityville.models.like.LikeAllDTO;
-import com.example.Unityville.models.cop.CommunityOfPracticeDTO;
 import com.example.Unityville.models.GroupDTO;
+import com.example.Unityville.models.cop.CommunityOfPracticeDTO;
+import com.example.Unityville.models.like.LikeAllDTO;
 import com.example.Unityville.models.post.PostDTO;
 import com.example.Unityville.models.post.PostEditDTO;
 import com.example.Unityville.models.user.UserDTO;
@@ -17,31 +17,39 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class Mapper {
     private final ModelMapper modelMapper;
-    public UserDTO convertToDTO(User user){
+
+    public UserDTO convertToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }
-    public GroupDTO convertToDTO(Group group){
+
+    public GroupDTO convertToDTO(Group group) {
         return modelMapper.map(group, GroupDTO.class);
     }
-    public PostDTO convertToDTO(Post post){
+
+    public PostDTO convertToDTO(Post post) {
         return modelMapper.map(post, PostDTO.class);
     }
-    public UserLikedPostsDTO convertToUserLikedDTO(User user){
+
+    public UserLikedPostsDTO convertToUserLikedDTO(User user) {
         return modelMapper.map(user, UserLikedPostsDTO.class);
     }
 
-    public CommunityOfPracticeDTO convertToDTO(CommunityOfPractice communityOfPractice){
+    public CommunityOfPracticeDTO convertToDTO(CommunityOfPractice communityOfPractice) {
         return modelMapper.map(communityOfPractice, CommunityOfPracticeDTO.class);
     }
-    public User convertToEntity(UserDTO userDTO){
+
+    public CommentDTO convertToDTO(Comment comment) {
+        return modelMapper.map(comment, CommentDTO.class);
+    }
+
+    public User convertToEntity(UserDTO userDTO) {
         return modelMapper.map(userDTO, User.class);
     }
-    public CommunityOfPractice convertToEntity(CommunityOfPracticeDTO communityOfPracticeDTO){
+
+    public CommunityOfPractice convertToEntity(CommunityOfPracticeDTO communityOfPracticeDTO) {
         return modelMapper.map(communityOfPracticeDTO, CommunityOfPractice.class);
     }
-    public Group convertToEntity(GroupDTO groupDTO) {
-        return modelMapper.map(groupDTO, Group.class);
-    }
+
     public LikeAllDTO convertToDTO(Like like) {
         return LikeAllDTO.builder()
                 .id(like.getId())
@@ -55,8 +63,5 @@ public class Mapper {
                         .createTimestamp(like.getPost().getCreateTimestamp())
                         .build())
                 .build();
-    }
-    public Comment convertToEntity(CommentDTO commentDTO){
-        return modelMapper.map(commentDTO, Comment.class);
     }
 }

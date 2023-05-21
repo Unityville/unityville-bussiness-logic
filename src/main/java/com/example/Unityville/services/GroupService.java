@@ -5,7 +5,6 @@ import com.example.Unityville.entities.Group;
 import com.example.Unityville.exceptions.AlreadyInsertException;
 import com.example.Unityville.exceptions.NotFoundException;
 import com.example.Unityville.models.cop.CommunityOfPracticeAddOrRemoveDTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,7 @@ public class GroupService {
         return group;
     }
 
-    public Group addCOP(Long groupId, CommunityOfPracticeAddOrRemoveDTO copId) throws JsonProcessingException {
+    public Group addCOP(Long groupId, CommunityOfPracticeAddOrRemoveDTO copId) {
         Group group = ioCallerService.getGroupById(groupId);
         CommunityOfPractice cop = ioCallerService.getCOPById(copId.getId());
 
@@ -60,7 +59,7 @@ public class GroupService {
         return ioCallerService.getGroupById(group.getId());
     }
 
-    public Group removeCOP(Long groupId, CommunityOfPracticeAddOrRemoveDTO copDTO) throws JsonProcessingException {
+    public Group removeCOP(Long groupId, CommunityOfPracticeAddOrRemoveDTO copDTO) {
         Group group = ioCallerService.getGroupById(groupId);
         CommunityOfPractice cop = ioCallerService.getCOPById(copDTO.getId());
 

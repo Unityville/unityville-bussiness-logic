@@ -1,7 +1,9 @@
 package com.example.Unityville.models.user;
 
+import com.example.Unityville.models.CommentDTO;
 import com.example.Unityville.models.GroupDTO;
 import com.example.Unityville.models.cop.CommunityOfPracticeAddOrRemoveDTO;
+import com.example.Unityville.models.like.LikeDTO;
 import com.example.Unityville.models.post.PostDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,4 +29,6 @@ public class UserDTO {
     private List<GroupDTO> groups;
     private List<PostDTO> posts;
     private List<CommunityOfPracticeAddOrRemoveDTO> communityOfPractices;
+    private List<LikeDTO> likes;
+    private List<CommentDTO> comments;
 }
