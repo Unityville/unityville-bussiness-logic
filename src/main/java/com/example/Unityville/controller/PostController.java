@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,12 +32,12 @@ public class PostController {
     public ResponseEntity<PostDTO> savePost(@RequestBody PostDTO postDTO) {
         Post post = Post.builder()
                 .title(postDTO.getTitle())
-                .createTimestamp(Timestamp.from(Instant.now()))
                 .text(postDTO.getText())
                 .image(postDTO.getImage())
                 .isPinned(postDTO.isPinned())
-                .user(mapper.convertToEntity(postDTO.getUser()))
-                .communityOfPractice(mapper.convertToEntity(postDTO.getCommunityOfPractice()))
+                .user((postDTO.getUser() == null) ? null : mapper.convertToEntity(postDTO.getUser()))
+                .communityOfPractice((postDTO.getCommunityOfPractice() == null) ? null :
+                        mapper.convertToEntity(postDTO.getCommunityOfPractice()))
                 .build();
         return ResponseEntity.ok(mapper.convertToDTO(postService.save(post)));
     }
@@ -56,7 +54,6 @@ public class PostController {
                 .text(postEditDTO.getText())
                 .isPinned(postEditDTO.isPinned())
                 .image(postEditDTO.getImage())
-                .createTimestamp(Timestamp.from(Instant.now()))
                 .build();
         return ResponseEntity.ok(mapper.convertToDTO(postService.editPost(id, post)));
     }

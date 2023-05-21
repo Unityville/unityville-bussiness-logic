@@ -1,5 +1,6 @@
 package com.example.Unityville.models.like;
 
+import com.example.Unityville.models.CommentDTO;
 import com.example.Unityville.models.post.PostEditDTO;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,4 +22,5 @@ public class LikeDTO {
     private Long id;
     private Timestamp timestamp;
     private PostEditDTO post;
+    private CommentDTO comment;
 }

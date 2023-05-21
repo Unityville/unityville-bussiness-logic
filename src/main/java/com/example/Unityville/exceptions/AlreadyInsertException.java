@@ -1,6 +1,6 @@
 package com.example.Unityville.exceptions;
 
-public class AlreadyInsertException extends RuntimeException{
+public class AlreadyInsertException extends RuntimeException {
     public AlreadyInsertException() {
     }
 

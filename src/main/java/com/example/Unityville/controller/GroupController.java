@@ -5,7 +5,6 @@ import com.example.Unityville.mappers.Mapper;
 import com.example.Unityville.models.GroupDTO;
 import com.example.Unityville.models.cop.CommunityOfPracticeAddOrRemoveDTO;
 import com.example.Unityville.services.GroupService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,12 +46,12 @@ public class GroupController {
     }
 
     @PutMapping("/{id}/addCOP")
-    public ResponseEntity<GroupDTO> addCOP(@PathVariable Long id, @RequestBody CommunityOfPracticeAddOrRemoveDTO copDTO) throws JsonProcessingException {
+    public ResponseEntity<GroupDTO> addCOP(@PathVariable Long id, @RequestBody CommunityOfPracticeAddOrRemoveDTO copDTO) {
         return ResponseEntity.ok(mapper.convertToDTO(groupService.addCOP(id, copDTO)));
     }
 
     @PutMapping("/{groupId}/removeCOP")
-    public ResponseEntity<GroupDTO> removeCOP(@PathVariable Long groupId, @RequestBody CommunityOfPracticeAddOrRemoveDTO copDTO) throws JsonProcessingException {
+    public ResponseEntity<GroupDTO> removeCOP(@PathVariable Long groupId, @RequestBody CommunityOfPracticeAddOrRemoveDTO copDTO) {
         return ResponseEntity.ok(mapper.convertToDTO(groupService.removeCOP(groupId, copDTO)));
     }
 }

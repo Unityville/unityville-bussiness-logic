@@ -1,7 +1,6 @@
 package com.example.Unityville.services;
 
 import com.example.Unityville.entities.*;
-import com.example.Unityville.exceptions.AlreadyInsertException;
 import com.example.Unityville.exceptions.NotFoundException;
 import com.example.Unityville.exceptions.NullArgumentsException;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -22,46 +22,70 @@ public class UserService {
     }
 
     public User save(User user) {
-        var u = ioCallerService.findUserByUsername(user.getUsername());
+        User userWithSameUsername = ioCallerService.findUserByUsername(user.getUsername());
 
-        if (user.getUsername() == null) {
-            throw new NullArgumentsException("illegal args");
-        }
-
-        if (findAll().contains(u)) {
-            throw new AlreadyInsertException("too bad! it's already inserted");
+        if (userWithSameUsername.getUsername() != null) {
+            throw new NullArgumentsException("This username already exists!");
         }
 
         return ioCallerService.saveUser(user);
     }
 
-    public User patchUserWithFollowedCOP(Long userId, Long copId) {
-        User user = ioCallerService.getUserReferenceById(userId);
+    public User updateUserWithFollowedCOP(Long userId, Long copId) {
+        User user = ioCallerService.findUserById(userId);
+
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + userId + " does not exists!");
+        }
+
         CommunityOfPractice cop = ioCallerService.getCOPById(copId);
+
+        if (cop.getName() == null) {
+            throw new NotFoundException("COP with id " + copId + " does not exists!");
+        }
 
         if (!user.getCommunityOfPractices().contains(cop)) {
             user.getCommunityOfPractices().add(cop);
         }
 
-        return ioCallerService.saveUser(user);
+        ioCallerService.putUser(user);
+
+        return user;
     }
 
-    public User patchUserWithUnfollowedCOP(Long userId, Long copId) {
-        var user = ioCallerService.getUserReferenceById(userId);
-        var cop = ioCallerService.getCOPById(copId);
-
-        user.getCommunityOfPractices().remove(cop);
-        cop.getUsers().remove(user);
-
-        return ioCallerService.saveUser(user);
-    }
-
-    public User patchUserWithLikedPost(Long userId, Long postId) {
+    public User updateUserWithUnfollowedCOP(Long userId, Long copId) {
         User user = ioCallerService.findUserById(userId);
+
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + userId + " does not exists!");
+        }
+
+        CommunityOfPractice cop = ioCallerService.getCOPById(copId);
+
+        if (cop.getName() == null) {
+            throw new NotFoundException("COP with id " + copId + " does not exists!");
+        }
+
+        user.getCommunityOfPractices().removeIf(c -> Objects.equals(c.getId(), copId));
+
+        cop.getUsers().removeIf(u -> Objects.equals(u.getId(), userId));
+
+        ioCallerService.putUser(user);
+
+        return user;
+    }
+
+    public User updateUserWithLikedPost(Long userId, Long postId) {
+        User user = ioCallerService.findUserById(userId);
+
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + userId + " does not exists!");
+        }
+
         Post post = ioCallerService.findPostById(postId);
 
-        if (user == null || post == null) {
-            throw new NotFoundException("Id not available in the database!");
+        if (post.getTitle() == null) {
+            throw new NotFoundException("Post with id " + postId + " does not exists!");
         }
 
         Like like = Like.builder()
@@ -72,15 +96,20 @@ public class UserService {
 
         ioCallerService.saveLike(like);
 
-        return ioCallerService.getUserReferenceById(userId);
+        return ioCallerService.findUserById(userId);
     }
 
-    public User patchUserWithLikedComment(Long userId, Long commentId) {
+    public User updateUserWithLikedComment(Long userId, Long commentId) {
         User user = ioCallerService.findUserById(userId);
+
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + userId + " does not exists!");
+        }
+
         Comment comment = ioCallerService.findCommentById(commentId);
 
-        if (user == null || comment == null) {
-            throw new NotFoundException("Id not available in the database!");
+        if (comment.getContent() == null) {
+            throw new NotFoundException("Comment with id " + commentId + " does not exists!");
         }
 
         Like like = Like.builder()
@@ -94,28 +123,51 @@ public class UserService {
         return ioCallerService.getUserReferenceById(userId);
     }
 
-    @Transactional
-    public User patchUserWithDislikedPost(Long userId, Long postId) {
+    public User updateUserWithDislikedPost(Long userId, Long postId) {
+        User user = ioCallerService.findUserById(userId);
+
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + userId + " does not exists!");
+        }
+
+        Post post = ioCallerService.findPostById(postId);
+
+        if (post.getTitle() == null) {
+            throw new NotFoundException("Post with id " + postId + " does not exists!");
+        }
+
         ioCallerService.deleteLikeByUserAndPost(userId, postId);
 
         return ioCallerService.getUserReferenceById(userId);
     }
 
     @Transactional
-    public User patchUserWithDislikedComment(Long userId, Long commentId) {
+    public User updateUserWithDislikedComment(Long userId, Long commentId) {
+        User user = ioCallerService.findUserById(userId);
+
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + userId + " does not exists!");
+        }
+
+        Comment comment = ioCallerService.findCommentById(commentId);
+
+        if (comment.getContent() == null) {
+            throw new NotFoundException("Post with id " + commentId + " does not exists!");
+        }
+
         ioCallerService.deleteLikeByUserAndComment(userId, commentId);
 
         return ioCallerService.getUserReferenceById(userId);
     }
 
     public User findUserById(Long id) {
-        User u = ioCallerService.findUserById(id);
+        User user = ioCallerService.findUserById(id);
 
-        if (u == null) {
-            throw new NotFoundException("Id not available in the database!");
+        if (user.getUsername() == null) {
+            throw new NotFoundException("User with id " + id + " not available!");
         }
 
-        return u;
+        return user;
     }
 
     public User editComment(Long userId, Long commentId, Comment newComment) {
@@ -129,8 +181,9 @@ public class UserService {
         comment.setContent(newComment.getContent());
         comment.setCreateTimestamp(Timestamp.from(Instant.now()));
 
-        ioCallerService.saveComment(comment);
+        ioCallerService.putComment(comment);
 
         return ioCallerService.getUserReferenceById(userId);
     }
+
 }

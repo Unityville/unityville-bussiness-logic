@@ -19,7 +19,7 @@ public class LikeController {
     private final LikeService likeService;
     private final Mapper mapper;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<LikeAllDTO>> findAllLikes() {
         return ResponseEntity.ok(likeService.findAll()
                 .stream()

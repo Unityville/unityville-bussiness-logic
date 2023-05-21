@@ -13,22 +13,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ErrorHandling {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({NullContentException.class})
+    @ExceptionHandler(NullContentException.class)
     public void handlerErrorIllegalArg(){
-    };
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({NullArgumentsException.class})
+    @ExceptionHandler(NullArgumentsException.class)
     public void handlerErrorNullArg(){
-    };
+    }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler({AlreadyInsertException.class})
+    @ExceptionHandler(AlreadyInsertException.class)
     public void handlerAlreadyInserted(){
-    };
+    }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({NotFoundException.class})
+    @ExceptionHandler(NotFoundException.class)
     public void handlerNotFound(){
-    };
+    }
 }

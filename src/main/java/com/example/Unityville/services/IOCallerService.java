@@ -1,7 +1,6 @@
 package com.example.Unityville.services;
 
 import com.example.Unityville.entities.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +18,7 @@ public class IOCallerService {
         return new RestTemplate().postForObject(IOUrl + "/cops", cop, CommunityOfPractice.class);
     }
 
-    public void putCOP(CommunityOfPractice cop) throws JsonProcessingException {
+    public void putCOP(CommunityOfPractice cop) {
         new RestTemplate().put(IOUrl + "/cops", cop);
     }
 
@@ -51,8 +50,8 @@ public class IOCallerService {
                 (new RestTemplate().getForObject(IOUrl + "/likes", Like[].class)));
     }
 
-    public Like saveLike(Like like) {
-        return new RestTemplate().postForObject(IOUrl + "/likes", like, Like.class);
+    public void saveLike(Like like) {
+        new RestTemplate().postForObject(IOUrl + "/likes", like, Like.class);
     }
 
     public void deleteLikeByUserAndPost(Long userId, Long postId) {
@@ -64,19 +63,19 @@ public class IOCallerService {
     }
 
     public Post getPostByTitle(String title) {
-        return new RestTemplate().getForObject(IOUrl + "/posts/{title}", Post.class, title);
+        return new RestTemplate().getForObject(IOUrl + "/posts_cop/title/{title}", Post.class, title);
     }
 
     public Post savePost(Post post) {
-        return new RestTemplate().postForObject(IOUrl + "/posts", post, Post.class);
+        return new RestTemplate().postForObject(IOUrl + "/posts_cop", post, Post.class);
     }
 
     public void deletePostById(Long id) {
-        new RestTemplate().delete(IOUrl + "/posts/{id}", id);
+        new RestTemplate().delete(IOUrl + "/posts_cop/{id}", id);
     }
 
     public Post findPostById(Long id) {
-        return new RestTemplate().getForObject(IOUrl + "/posts/{id}", Post.class, id);
+        return new RestTemplate().getForObject(IOUrl + "/posts_cop/id/{id}", Post.class, id);
     }
 
     public List<Post> findAllPosts() {
@@ -84,8 +83,8 @@ public class IOCallerService {
                 (new RestTemplate().getForObject(IOUrl + "/posts_cop", Post[].class)));
     }
 
-    public Post getPostReferenceById(Long id) {
-        return new RestTemplate().getForObject(IOUrl + "/posts_cop/{id}", Post.class, id);
+    public void putPost(Post post) {
+        new RestTemplate().put(IOUrl + "/posts_cop", post);
     }
 
     public List<User> findAllUsers() {
@@ -94,7 +93,7 @@ public class IOCallerService {
     }
 
     public User findUserByUsername(String username) {
-        return new RestTemplate().getForObject(IOUrl + "/users/{username}", User.class, username);
+        return new RestTemplate().getForObject(IOUrl + "/users/username/{username}", User.class, username);
     }
 
     public User findUserById(Long id) {
@@ -105,6 +104,10 @@ public class IOCallerService {
         return new RestTemplate().postForObject(IOUrl + "/users", user, User.class);
     }
 
+    public void putUser(User user) {
+        new RestTemplate().put(IOUrl + "/users", user);
+    }
+
     public User getUserReferenceById(Long id) {
         return new RestTemplate().getForObject(IOUrl + "/users/{id}", User.class, id);
     }
@@ -113,11 +116,20 @@ public class IOCallerService {
         return new RestTemplate().getForObject(IOUrl + "/comments/{id}", Comment.class, id);
     }
 
-    public Comment saveComment(Comment comment) {
-        return new RestTemplate().postForObject(IOUrl + "/comment", comment, Comment.class);
+    public void saveComment(Comment comment) {
+        new RestTemplate().postForObject(IOUrl + "/comments", comment, Comment.class);
     }
 
-    public void putGroup(Group group) {
-        new RestTemplate().put(IOUrl + "/groups_cop", group);
+    public void putComment(Comment comment) {
+        new RestTemplate().put(IOUrl + "/comments", comment);
+    }
+
+    public List<Comment> findAllComments() {
+        return Arrays.asList(Objects.requireNonNull
+                (new RestTemplate().getForObject(IOUrl + "/comments", Comment[].class)));
+    }
+
+    public void deleteCommentById(Long id) {
+        new RestTemplate().delete(IOUrl + "/comments/{id}", id);
     }
 }
