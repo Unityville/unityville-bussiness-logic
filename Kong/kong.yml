@@ -8,9 +8,9 @@ services:
 #        paths:
 #          - /api/cop
 
-  - name: workbench
-    url: http://workbench:80
+  - name: db-adminer
+    url: http://adminer:8080
     routes:
-      - name: workbench-route
+      - name: adminer-service
         paths:
-          - /workbench
+          - /adminer
