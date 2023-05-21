@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   core:
-    image: razvantanase/core:1.0.0
+    image: razvantanase/core:1.1.0
     depends_on:
       - io
     deploy:
@@ -19,7 +19,7 @@ services:
       - auth_core
 
   io:
-    image: razvantanase/io:1.0.0
+    image: razvantanase/io:1.1.0
     depends_on:
       - db_backend
     deploy:
@@ -35,7 +35,7 @@ services:
       - io_db_backend
 
   auth:
-    image: razvantanase/auth:1.0.0
+    image: razvantanase/auth:1.1.0
     depends_on:
       - db_auth
     networks:
