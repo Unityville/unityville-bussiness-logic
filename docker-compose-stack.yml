@@ -5,8 +5,8 @@ services:
     image: razvantanase/core:1.0.0
     depends_on:
       - io
-    ports:
-      - '8080:8080'
+#    ports:
+#      - '8080:8080'
     deploy:
       replicas: 3
       placement:
@@ -24,8 +24,8 @@ services:
     image: razvantanase/io:1.0.0
     depends_on:
       - db_backend
-    ports:
-      - '8070:8070'
+#    ports:
+#      - '8070:8070'
     deploy:
       replicas: 3
       placement:
@@ -43,16 +43,16 @@ services:
     image: razvantanase/auth:1.0.0
     depends_on:
       - db_auth
-    ports:
-      - '8090:8090'
+#    ports:
+#      - '8090:8090'
     networks:
       - auth_core
       - auth_db_auth
 
   db_backend:
     image: mysql:8.0.33
-    ports:
-      - '3306:3306'
+#    ports:
+#      - '3306:3306'
     volumes:
       - db_backend:/var/lib/mysql
     user: root
@@ -87,8 +87,8 @@ services:
     volumes:
       - db_auth:/var/lib/mysql
     user: root
-    ports:
-      - '3307:3306'
+#    ports:
+#      - '3307:3306'
     environment:
       - MYSQL_DATABASE=auth
       - MYSQL_ROOT_USER=root
@@ -101,7 +101,6 @@ services:
     image: kong:latest
     volumes:
       - ./Kong:/usr/local/kong/declarative
-      - ./kong.yml:/usr/local/kong/declarative/kong.yml
     environment:
       KONG_DATABASE: 'off'
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
@@ -117,8 +116,7 @@ services:
       - "8444:8444"
     deploy:
       placement:
-        constraints:
-        - "node.role==manager"
+        constraints: [ node.role == manager ]
     networks:
       - internal
 

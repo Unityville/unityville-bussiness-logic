@@ -1,12 +1,12 @@
 _format_version: "2.1"
 
 services:
-  - name: core
-    url: http://core/api
-    routes:
-      - name: core-route
-        paths:
-          - /api/cop
+#  - name: core
+#    url: http://core/api
+#    routes:
+#      - name: core-route
+#        paths:
+#          - /api/cop
 
   - name: workbench
     url: http://workbench:80
@@ -15,14 +15,3 @@ services:
         paths:
           - /workbench
         strip_path: true
-
-#consumers:
-#  - username: lab-student
-#
-#plugins:
-#  - name: key-auth
-#    service: books-service
-#
-#keyauth_credentials:
-#  - consumer: lab-student
-#    key: mobylab
