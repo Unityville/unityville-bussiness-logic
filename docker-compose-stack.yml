@@ -50,6 +50,7 @@ services:
     environment:
       - MYSQL_DATABASE=connectville-app
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_USER=root
     deploy:
       placement:
         constraints:
@@ -78,6 +79,7 @@ services:
     environment:
       - MYSQL_DATABASE=auth
       - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_USER=root
     networks:
       - auth_db_auth
       - workbench_db_auth
