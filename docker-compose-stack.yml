@@ -1,0 +1,134 @@
+version: '3.9'
+
+services:
+  core:
+    image: razvantanase/core:1.0.0
+    depends_on:
+      - io
+#    ports:
+#      - '8080:8080'
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+      update_config:
+        order: start-first
+      rollback_config:
+        order: stop-first
+    networks:
+      - internal
+      - io_core
+      - auth_core
+
+  io:
+    image: razvantanase/io:1.0.0
+    depends_on:
+      - db_backend
+#    ports:
+#      - '8070:8070'
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+      update_config:
+        order: start-first
+      rollback_config:
+        order: stop-first
+
+    networks:
+      - io_core
+      - io_db_backend
+
+  auth:
+    image: razvantanase/auth:1.0.0
+    depends_on:
+      - db_auth
+#    ports:
+#      - '8090:8090'
+    networks:
+      - auth_core
+      - auth_db_auth
+
+  db_backend:
+    image: mysql:8.0.33
+#    ports:
+#      - '3306:3306'
+    volumes:
+      - db_backend:/var/lib/mysql
+    user: root
+    environment:
+      - MYSQL_DATABASE=connectville-app
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    deploy:
+      placement:
+        constraints:
+          - "node.role==manager"
+    networks:
+      - io_db_backend
+      - workbench_db_backend
+
+  workbench:
+    image: phpmyadmin
+    ports:
+      - '8081:80'
+    environment:
+      - PMA_ARBITRARY=1
+    depends_on:
+      - db_backend
+      - db_auth
+    networks:
+      - internal
+      - workbench_db_auth
+      - workbench_db_backend
+
+  db_auth:
+    image: mysql:8.0.33
+    volumes:
+      - db_auth:/var/lib/mysql
+    user: root
+#    ports:
+#      - '3307:3306'
+    environment:
+      - MYSQL_DATABASE=auth
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    networks:
+      - auth_db_auth
+      - workbench_db_auth
+
+  kong:
+    image: kong:latest
+    volumes:
+      - ./Kong:/usr/local/kong/declarative
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - "80:8000"
+      - "443:8443"
+      - "8001:8001"
+      - "8444:8444"
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+    networks:
+      - internal
+
+volumes:
+  db_backend:
+  db_auth:
+
+networks:
+  internal:
+  io_core:
+  io_db_backend:
+  auth_core:
+  auth_db_auth:
+  workbench_db_auth:
+  workbench_db_backend:
