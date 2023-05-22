@@ -1,0 +1,23 @@
+---
+api:
+  dashboard: false
+  insecure: false
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: :443
+
+providers:
+  docker:
+    exposedByDefault: false
+    watch: true
+    network: internal
+    swarmMode: false

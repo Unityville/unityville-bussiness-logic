@@ -1,12 +1,40 @@
 _format_version: "2.1"
 
 services:
-#  - name: core
-#    url: http://core/api
+  - name: core
+    url: http://core:8080/cop
+    routes:
+      - name: core-route
+        paths:
+          - /api/cop
+
+#  - name: auth
+#    url: http://auth:8090
 #    routes:
-#      - name: core-route
+#      - name: auth-route
 #        paths:
-#          - /api/cop
+#          - /auth
+
+  - name: auth_authorize
+    url: http://auth:8090/oauth2/authorize
+    routes:
+      - name: auth-authorize-route
+        paths:
+          - /auth/authorize
+
+  - name: auth_token
+    url: http://auth:8090/oauth2/token
+    routes:
+      - name: auth-token-route
+        paths:
+          - /auth/token
+
+  - name: auth_login
+    url: http://auth:8090/login
+    routes:
+      - name: auth-login-route
+        paths:
+          - /auth/login
 
   - name: db-adminer
     url: http://adminer:8080

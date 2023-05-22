@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   core:
-    image: razvantanase/core:1.1.0
+    image: razvantanase/core:1.2.0
     depends_on:
       - io
     deploy:
@@ -19,7 +19,7 @@ services:
       - auth_core
 
   io:
-    image: razvantanase/io:1.1.0
+    image: razvantanase/io:1.2.0
     depends_on:
       - db_backend
     deploy:
@@ -35,12 +35,20 @@ services:
       - io_db_backend
 
   auth:
-    image: razvantanase/auth:1.1.0
+    image: unityville-bussiness-logic-auth:latest
     depends_on:
       - db_auth
     networks:
       - auth_core
       - auth_db_auth
+      - internal
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.entrypoints=web,websecure
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.rule=Path(`/auth`)
+      - traefik.http.services.backend.loadbalancer.server.port=8090
+      - traefik.http.middlewares.backend.stripprefix.prefixes=/auth
 
   db_backend:
     image: mysql:8.0.33
@@ -63,10 +71,16 @@ services:
   adminer:
     image: adminer
     ports:
-      - '8080:8080'
+      - '8081:8080'
     depends_on:
       - db_backend
       - db_auth
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.entrypoints=web,websecure
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.rule=Path(`/adminer`)
+      - traefik.http.services.backend.loadbalancer.server.port=8080
     networks:
       - internal
       - workbench_db_auth
@@ -86,28 +100,29 @@ services:
       - auth_db_auth
       - workbench_db_auth
 
-#  workbench:
-#    image: phpmyadmin
+#  nginx:
+#    image: nginx:latest
 #    ports:
-#      - '8081:80'
-#    environment:
-#      - PMA_ARBITRARY=1
-#    depends_on:
-#      - db_backend
-#      - db_auth
+#      - "80:80"
+#    volumes:
+#      - ./nginx.conf:/etc/nginx/nginx.conf
 #    networks:
 #      - internal
-#      - workbench_db_auth
-#      - workbench_db_backend
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
+  gateway:
+    image: traefik:latest
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/:/etc/traefik/:ro
+      - ./secrets/:/etc/traefik_certs/:ro
+    labels:
+      - traefik.enable=true
     networks:
       - internal
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
 
 #  kong:
 #    image: kong:latest
