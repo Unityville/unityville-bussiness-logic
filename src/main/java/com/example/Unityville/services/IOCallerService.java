@@ -12,7 +12,7 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class IOCallerService {
-    private final String IOUrl = "http://core:8070";
+    private final String IOUrl = "http://io:8070";
 
     public CommunityOfPractice saveCOP(CommunityOfPractice cop) {
         return new RestTemplate().postForObject(IOUrl + "/cops", cop, CommunityOfPractice.class);
